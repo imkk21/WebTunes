@@ -1,0 +1,20 @@
+{
+  "name": "webtunes",
+  "version": "1.0.0",
+  "description": "Real-time collaborative music and video streaming platform.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imkk21/WebTunes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imkk21/WebTunes/issues"
+  },
+  "homepage": "https://github.com/imkk21/WebTunes#readme"
+}

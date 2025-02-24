@@ -22,16 +22,20 @@ app.get("/api/auth/spotify/login", (req, res) => {
 });
 
 // Callback after Spotify authentication
-app.get("/api/auth/spotify/callback", async (req, res) => {
-  const { code } = req.query;
+app.post("/api/auth/callback/spotify", async (req, res) => {
+  const { code } = req.body;
 
   if (!code) {
+    console.error("Authorization code is missing");
     return res.status(400).json({ error: "Authorization code is missing" });
   }
 
   try {
+    console.log("Exchanging code for tokens...");
     const data = await spotifyApi.authorizationCodeGrant(code);
     const { access_token, refresh_token } = data.body;
+
+    console.log("Tokens received:", { access_token, refresh_token });
 
     // Send tokens back to the frontend
     res.json({ access_token, refresh_token });

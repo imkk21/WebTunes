@@ -7,9 +7,17 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const router = useRouter();
 
   useEffect(() => {
+    // Check Firebase authentication
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
-        router.push("/sign-in"); // Redirect to sign-in page if not authenticated
+        // If no Firebase user, check for Spotify tokens
+        const access_token = localStorage.getItem("spotify_access_token");
+        const refresh_token = localStorage.getItem("spotify_refresh_token");
+
+        if (!access_token || !refresh_token) {
+          // If no Spotify tokens, redirect to sign-in page
+          router.push("/sign-in");
+        }
       }
     });
 

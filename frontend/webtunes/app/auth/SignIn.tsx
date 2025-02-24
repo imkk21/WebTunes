@@ -4,7 +4,6 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../lib/firebase";
 import { useRouter } from "next/navigation";
 
-
 export default function SignIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -29,7 +28,14 @@ export default function SignIn() {
         }
     };
 
+    const handleSpotifySignIn = async () => {
+        try {
 
+            window.location.href = "http://localhost:5000/api/auth/spotify/login";
+        } catch (error) {
+            console.error("Error signing in with Spotify:", error);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -60,6 +66,12 @@ export default function SignIn() {
                     className="w-full p-2 mt-4 bg-red-500 text-white rounded hover:bg-red-600"
                 >
                     Sign In with Google
+                </button>
+                <button
+                    onClick={handleSpotifySignIn}
+                    className="w-full p-2 mt-4 bg-green-500 text-white rounded hover:bg-green-600"
+                >
+                    Sign In with Spotify
                 </button>
             </div>
         </div>

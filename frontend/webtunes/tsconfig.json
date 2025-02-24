@@ -23,6 +23,6 @@
     },
     "typeRoots": ["./node_modules/@types", "./types"] // Add this line
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.d.ts"], // Update this line
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.d.ts", "app/api/auth/route.js", "types/global.d.js", "types/global.d.js", "types/global.d.js"], // Update this line
   "exclude": ["node_modules"]
 }

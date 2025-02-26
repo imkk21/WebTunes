@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyCInDXnr6mMbwIMypE9Z7Yz3wLgyxZ33us",
@@ -13,3 +14,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+export const providerSpotify = new OAuthProvider("spotify.com"); // Add Spotify Provider

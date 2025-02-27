@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { user, spotifyToken, loading, logout } = useAuth();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!loading && !user && !spotifyToken) {
+      router.push("/sign-in");
+    }
+  }, [user, spotifyToken, loading, router]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
@@ -19,8 +25,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   if (!user && !spotifyToken) {
-    router.push("/sign-in");
-    return null;
+    return null; // Prevents flickering
   }
 
   return (
@@ -42,7 +47,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        {/* This will load nested pages (dashboard/music, dashboard/videos, etc.) */}
         {children}
       </main>
     </div>

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -12,7 +13,8 @@ const firebaseConfig = {
     measurementId: "G-D7NKHLKEVY"
   };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-export const providerSpotify = new OAuthProvider("spotify.com"); // Add Spotify Provider
+  const app = initializeApp(firebaseConfig);
+  export const auth = getAuth(app);
+  export const googleProvider = new GoogleAuthProvider();
+  export const providerSpotify = new OAuthProvider("spotify.com");
+  export const db = getFirestore(app);

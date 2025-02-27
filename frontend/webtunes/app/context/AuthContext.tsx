@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User, signOut } from "firebase/auth";
 
 interface AuthContextType {
   user: User | null;
@@ -24,18 +24,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // Load initial state from localStorage
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("spotify_access_token");
-
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const storedUser = localStorage.getItem("user");
 
     if (storedToken) {
       setSpotifyToken(storedToken);
     }
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
 
+    // Subscribe to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
@@ -47,29 +48,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     });
 
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
+  // Handle Spotify OAuth flow
   const signInWithSpotify = () => {
-    const clientId = "YOUR_SPOTIFY_CLIENT_ID";
-    const redirectUri = "http://localhost:3000/auth/callback"; // Change this in production
+    const clientId = "2067f81d796f465b89d6076b5ea65143";
+    const redirectUri = "http://localhost:3000/auth/callback";
     const scope = "user-read-email user-read-private streaming";
-    
+
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&scope=${encodeURIComponent(scope)}`;
 
-    window.location.href = authUrl; // Redirects to Spotify login page
+    // Redirect to Spotify authorization page
+    window.location.href = authUrl;
   };
 
-  const logout = () => {
-    auth.signOut();
-    localStorage.removeItem("spotify_access_token");
-    localStorage.removeItem("spotify_refresh_token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setSpotifyToken(null);
-    router.push("/sign-in");
+  // Handle logout
+  const logout = async () => {
+    try {
+      await signOut(auth); // Sign out from Firebase
+      localStorage.removeItem("spotify_access_token");
+      localStorage.removeItem("spotify_refresh_token");
+      localStorage.removeItem("user");
+      setUser(null);
+      setSpotifyToken(null);
+      router.push("/sign-in");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (

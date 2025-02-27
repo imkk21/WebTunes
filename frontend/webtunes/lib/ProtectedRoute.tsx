@@ -8,15 +8,12 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user) {
-        const access_token = localStorage.getItem("spotify_access_token");
-        if (!access_token) {
-          router.push("/sign-in");
-        } else {
-          router.push("/dashboard");
-        }
-      } else {
+      const access_token = localStorage.getItem("spotify_access_token");
+
+      if (user || access_token) {
         router.push("/dashboard");
+      } else {
+        router.push("/");
       }
     });
 

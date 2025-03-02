@@ -52,7 +52,7 @@ export default function Home() {
 }
 
 // Feature Card Component
-function FeatureCard({ title, description }: { title: string; description: string }) {
+function FeatureCard({ title, description }) {
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
       <h2 className="text-xl font-bold text-green-400">{title}</h2>

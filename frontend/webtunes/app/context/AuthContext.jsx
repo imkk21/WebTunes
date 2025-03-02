@@ -1,26 +1,14 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, User, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
-interface AuthContextType {
-  user: User | null;
-  spotifyToken: string | null;
-  loading: boolean;
-  signInWithSpotify: () => void;
-  logout: () => void;
-}
+const AuthContext = createContext(null);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [spotifyToken, setSpotifyToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

@@ -3,20 +3,15 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 
-interface Playlist {
-  id: string;
-  name: string;
-}
-
 export default function MusicPage() {
-  const { user, spotifyToken } = useAuth(); // Assuming `user` contains Google auth info
+  const { user, spotifyToken } = useAuth(); 
   const router = useRouter();
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [selectedPlaylist, setSelectedPlaylist] = useState<string>("");
+  const [playlists, setPlaylists] = useState([]);
+  const [selectedPlaylist, setSelectedPlaylist] = useState("");
 
   const handleConnectSpotify = () => {
-    const clientId = "2067f81d796f465b89d6076b5ea65143"; // Replace with your Spotify client ID
-    const redirectUri = "http://localhost:3000/api/auth/callback/spotify"; // Your callback URL
+    const clientId = "2067f81d796f465b89d6076b5ea65143"; 
+    const redirectUri = "http://localhost:3000/api/auth/callback/spotify"; 
     const scope = "user-read-email user-read-private streaming playlist-read-private";
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
       redirectUri
@@ -33,7 +28,7 @@ export default function MusicPage() {
         .then((res) => res.json())
         .then((data) => {
           if (data.items) {
-            setPlaylists(data.items.map((item: { id: string; name: string }) => ({ id: item.id, name: item.name })));
+            setPlaylists(data.items.map((item) => ({ id: item.id, name: item.name })));
           }
         })
         .catch((err) => console.error("Error fetching playlists:", err));
@@ -45,7 +40,7 @@ export default function MusicPage() {
       <h2 className="text-3xl font-bold">Music</h2>
       <p className="mt-2 text-gray-300">Explore your music collection here.</p>
 
-      {user ? ( // Check if the user is authenticated via Google
+      {user ? (
         spotifyToken ? (
           <div className="mt-6">
             {playlists.length > 0 ? (
@@ -91,7 +86,6 @@ export default function MusicPage() {
       ) : (
         <div className="mt-6">
           <p className="text-red-400 mb-4">Please log in with Google to access this feature.</p>
-          {/* Add a button or link to log in with Google */}
         </div>
       )}
     </div>

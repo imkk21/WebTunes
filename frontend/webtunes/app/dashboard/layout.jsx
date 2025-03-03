@@ -2,20 +2,21 @@
 import React, { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
-import { FiLogOut, FiLoader, FiMusic, FiTrendingUp, FiUsers } from "react-icons/fi";
+import { FiLogOut, FiLoader } from "react-icons/fi";
 import { toast, Toaster } from "react-hot-toast";
 
 export default function DashboardLayout({ children }) {
-  const { user, spotifyToken, loading, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user && !spotifyToken) {
+    if (!loading && !user) {
       router.push("/sign-in");
     }
-  }, [user, spotifyToken, loading, router]);
+  }, [user, loading, router]);
 
   const handleLogout = async () => {
     try {
@@ -35,7 +36,7 @@ export default function DashboardLayout({ children }) {
     );
   }
 
-  if (!user && !spotifyToken) {
+  if (!user) {
     return null;
   }
 
@@ -46,18 +47,19 @@ export default function DashboardLayout({ children }) {
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64"> {/* Adjust margin to match Sidebar width */}
         {/* Header */}
         <Header />
 
         {/* Main Content Area */}
-        <main className="p-6 space-y-6 overflow-y-auto">
-          {/* Stats Cards */}
-          
+        <main className="flex-1 overflow-y-auto p-6">
+          {children}
+          </main>
 
-          {/* Children Content */}
-          <div className="animate-fade-in">{children}</div>
-        </main>
+          {/* Footer */}
+            <Footer />
+         
+      
       </div>
     </div>
   );

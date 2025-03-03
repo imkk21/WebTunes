@@ -1,7 +1,11 @@
 "use client";
 import { FiBell, FiSearch } from "react-icons/fi";
+import { useAuth } from "../context/AuthContext";
+import Image from "next/image";
 
 const Header = () => {
+  const { user } = useAuth(); // Get the logged-in user from your AuthContext
+
   return (
     <header className="bg-gray-800 p-4 flex justify-between items-center border-b border-gray-700">
       {/* Search Bar */}
@@ -16,17 +20,31 @@ const Header = () => {
 
       {/* Notifications and User Info */}
       <div className="flex items-center gap-4">
+        {/* Notifications */}
         <button className="p-2 hover:bg-gray-700 rounded-lg">
           <FiBell className="text-gray-400" />
         </button>
-        <div className="flex items-center gap-2">
-          <img
-            src="/profile-pic.jpg"
-            alt="Profile"
-            className="w-8 h-8 rounded-full"
-          />
-          <span className="text-white">John Doe</span>
-        </div>
+
+        {/* User Profile */}
+        {user && (
+          <div className="flex items-center gap-2">
+            {/* Profile Picture */}
+            {user.photoURL && (
+              <div className="flex items-center gap-2">
+                <Image 
+                  src={user.photoURL} 
+                  alt="Profile" 
+                  width={40} 
+                  height={40} 
+                  className="rounded-full" 
+                />
+              </div>
+            )}
+
+            {/* User Name */}
+            <span className="text-white">{user.displayName || user.email}</span>
+          </div>
+        )}
       </div>
     </header>
   );

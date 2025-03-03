@@ -1,7 +1,6 @@
-"use client"; // Mark this as a Client Component
-import React from "react";
-import { FiHome, FiMusic, FiVideo, FiUser, FiSettings } from "react-icons/fi";
+"use client";
 import Link from "next/link";
+import { FiHome, FiMusic, FiVideo, FiUser, FiSettings } from "react-icons/fi";
 import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
@@ -11,7 +10,7 @@ const Sidebar = () => {
   const isActive = (path) => pathname === path;
 
   return (
-    <nav className="w-64 bg-gray-800 h-screen p-6 flex flex-col border-r border-gray-700">
+    <nav className="fixed top-0 left-0 w-64 h-screen bg-gray-800 border-r border-gray-700 p-6 flex flex-col">
       {/* Logo */}
       <h2 className="text-xl font-bold text-white mb-8">WebTunes</h2>
 

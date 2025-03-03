@@ -1,48 +1,70 @@
 "use client";
-import React from "react";
-import { FaPlay } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { auth, googleProvider } from "@/lib/firebase";
+import { signInWithPopup, signOut } from "firebase/auth";
+import Image from "next/image";
 
-const DashboardHome = () => {
+export default function Dashboard() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+
+        // Send user data to MongoDB backend
+        try {
+          const res = await fetch("/api/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              firebaseUID: firebaseUser.uid, // Match the backend model field
+              displayName: firebaseUser.displayName,
+              email: firebaseUser.email,
+              profilePicture: firebaseUser.photoURL,
+            }),
+          });
+
+          const data = await res.json();
+          console.log("User saved:", data);
+        } catch (error) {
+          console.error("Error saving user:", error);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
+
   return (
-    <div className="flex-1 p-6 text-white bg-gray-900">
-      <h1 className="text-3xl font-bold">Welcome Back!</h1>
-
-      <div className="mt-5 bg-gray-800 p-5 rounded-lg flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Now Playing</h2>
-          <p className="text-gray-400">Song Name - Artist</p>
-        </div>
-        <button className="bg-green-500 p-3 rounded-full">
-          <FaPlay className="text-white" />
+    <div className="p-6">
+      {user ? (
+        <>
+          <h1 className="text-2xl font-bold">Welcome, {user.displayName}</h1>
+          <Image src={user.photoURL} alt="Profile" width={100} height={100} className="rounded-full" />
+          <p>Email: {user.email}</p>
+          <button className="mt-4 p-2 bg-red-500 text-white" onClick={handleLogout}>
+            Logout
+          </button>
+        </>
+      ) : (
+        <button className="p-2 bg-blue-500 text-white" onClick={handleLogin}>
+          Sign in with Google
         </button>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-bold mb-3">Your Playlists</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {["Chill Vibes", "Rock Classics", "Workout", "Top 50"].map((playlist, idx) => (
-            <div key={idx} className="bg-gray-700 p-4 rounded-lg">
-              <p className="font-semibold">{playlist}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <h2 className="text-2xl font-bold mb-3">Trending Songs</h2>
-        <ul className="space-y-2">
-          {["Song A - Artist X", "Song B - Artist Y", "Song C - Artist Z"].map((song, idx) => (
-            <li key={idx} className="bg-gray-700 p-3 rounded-lg flex justify-between">
-              {song}
-              <button className="bg-blue-500 p-2 rounded-full">
-                <FaPlay className="text-white" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      )}
     </div>
   );
-};
-
-export default DashboardHome;
+}

@@ -4,22 +4,23 @@ import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function MusicPage() {
-  const { user, spotifyToken } = useAuth(); 
+  const { user, spotifyToken, saveSpotifyToken } = useAuth();
   const router = useRouter();
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
 
-  const handleConnectSpotify = () => {
-    const clientId = "2067f81d796f465b89d6076b5ea65143"; 
-    const redirectUri = "http://localhost:3000/api/auth/callback/spotify"; 
-    const scope = "user-read-email user-read-private streaming playlist-read-private";
-    const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
-      redirectUri
-    )}&scope=${encodeURIComponent(scope)}`;
-  
-    router.push(authUrl);
-  };
+  // Handle Spotify token from URL query
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("spotify_token");
 
+    if (token) {
+      saveSpotifyToken(token);
+      router.replace("/dashboard/music"); // Remove the token from the URL
+    }
+  }, [saveSpotifyToken, router]);
+
+  // Fetch playlists if Spotify token is available
   useEffect(() => {
     if (spotifyToken) {
       fetch("https://api.spotify.com/v1/me/playlists", {
@@ -34,6 +35,11 @@ export default function MusicPage() {
         .catch((err) => console.error("Error fetching playlists:", err));
     }
   }, [spotifyToken]);
+
+  // Redirect to Spotify login
+  const signInWithSpotify = () => {
+    window.location.href = "http://localhost:5000/api/auth/spotify/login";
+  };
 
   return (
     <div className="p-6 text-white">
@@ -76,7 +82,7 @@ export default function MusicPage() {
           <div className="mt-6">
             <p className="text-gray-400 mb-4">You are logged in with Google. Connect your Spotify account to listen to music.</p>
             <button
-              onClick={handleConnectSpotify}
+              onClick={signInWithSpotify}
               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-md transition"
             >
               Connect to Spotify

@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
-import { signOut } from "firebase/auth";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { FaSignOutAlt, FaEdit } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -53,10 +52,6 @@ export default function Profile() {
     }
   };
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    setUser(null);
-  };
 
   if (loading) {
     return <div className="p-6 text-center">Loading...</div>;
@@ -111,14 +106,6 @@ export default function Profile() {
               Save
             </button>
           )}
-
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="mt-4 p-2 bg-red-600 rounded flex items-center justify-center"
-          >
-            <FaSignOutAlt className="mr-2" /> Logout
-          </button>
         </motion.div>
       ) : (
         <p className="text-red-500">You are not logged in.</p>

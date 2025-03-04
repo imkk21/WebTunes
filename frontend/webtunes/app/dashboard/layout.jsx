@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }) {
         <Header />
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto "> {/*p6*/}
           {children}
           </main>
 

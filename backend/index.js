@@ -48,30 +48,12 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: process.env.SPOTIFY_REDIRECT_URI,
 });
 
-// Agora Token Generation Endpoint
-app.post("/api/agora/token", (req, res) => {
-  const { channelName, uid } = req.body;
-  if (!channelName || !uid) {
-    return res.status(400).json({ error: "Channel name and UID are required" });
-  }
-
-  const appID = process.env.AGORA_APP_ID;
-  const appCertificate = process.env.AGORA_APP_CERTIFICATE;
-  const role = RtcRole.PUBLISHER;
-  const expirationTimeInSeconds = 3600;
-  const currentTimestamp = Math.floor(Date.now() / 1000);
-  const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
-
-  const token = RtcTokenBuilder.buildTokenWithUid(
-    appID,
-    appCertificate,
-    channelName,
-    uid,
-    role,
-    privilegeExpiredTs
-  );
-
-  res.json({ token, appID });
+// Spotify Login Route
+app.get("/api/auth/spotify/login", (req, res) => {
+  const scopes = ["user-read-email", "user-read-private"]; // Add required scopes
+  const state = "some-random-state"; // Optional: Add a state parameter for security
+  const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
+  res.redirect(authorizeURL);
 });
 
 // Spotify Authentication Callback
@@ -83,10 +65,10 @@ app.post("/api/auth/callback/spotify", async (req, res) => {
     const spotifyApiInstance = new SpotifyWebApi({
       clientId: process.env.SPOTIFY_CLIENT_ID,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-      redirectUri: process.env.SPOTIFY_REDIRECT_URI,
+      redirectUri: process.env.SPOTIFY_REDIRECT_URI, // Ensure this matches the frontend
     });
 
-    // ✅ Exchange code for access & refresh tokens
+    // Exchange code for access & refresh tokens
     const data = await spotifyApiInstance.authorizationCodeGrant(code);
     const { access_token, refresh_token, expires_in } = data.body;
     const tokenExpiry = new Date(Date.now() + expires_in * 1000); // ✅ Expiry timestamp
@@ -119,6 +101,32 @@ app.post("/api/auth/callback/spotify", async (req, res) => {
     console.error("❌ Spotify authentication error:", error);
     res.status(500).json({ error: "Authentication failed" });
   }
+});
+
+// Agora Token Generation Endpoint
+app.post("/api/agora/token", (req, res) => {
+  const { channelName, uid } = req.body;
+  if (!channelName || !uid) {
+    return res.status(400).json({ error: "Channel name and UID are required" });
+  }
+
+  const appID = process.env.AGORA_APP_ID;
+  const appCertificate = process.env.AGORA_APP_CERTIFICATE;
+  const role = RtcRole.PUBLISHER;
+  const expirationTimeInSeconds = 3600;
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+
+  const token = RtcTokenBuilder.buildTokenWithUid(
+    appID,
+    appCertificate,
+    channelName,
+    uid,
+    role,
+    privilegeExpiredTs
+  );
+
+  res.json({ token, appID });
 });
 
 const PORT = process.env.PORT || 5000;

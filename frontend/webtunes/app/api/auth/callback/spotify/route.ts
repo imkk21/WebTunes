@@ -21,16 +21,17 @@ export async function GET(request: Request) {
 
     const data = await backendResponse.json();
 
-    if (backendResponse.ok) {
-      console.log("Tokens received from backend:", data);
-
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/spotify/callback?access_token=${data.access_token}&refresh_token=${data.refresh_token}`
-      );
-    } else {
+    if (!backendResponse.ok) {
       console.error("Failed to exchange code for tokens:", data.error);
       throw new Error(data.error || "Failed to exchange code for tokens");
     }
+
+    console.log("Tokens received from backend:", data);
+
+    // Redirect to the callback page with the tokens in the URL
+    return NextResponse.redirect(
+      `http://localhost:3000/auth/spotify/callback?access_token=${data.access_token}&refresh_token=${data.refresh_token}`
+    );
   } catch (error) {
     console.error("Error during Spotify callback:", error);
     return NextResponse.json({ error: "Callback failed" }, { status: 500 });

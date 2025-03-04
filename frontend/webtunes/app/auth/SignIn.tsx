@@ -3,8 +3,8 @@ import { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
-import { FaGoogle,  FaEnvelope } from "react-icons/fa";
-//FaSpotify,
+import { FaGoogle,  FaEnvelope , FaSpotify,} from "react-icons/fa";
+
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,13 +28,13 @@ export default function SignIn() {
     }
   };
 
-  // const handleSpotifySignIn = async () => {
-  //   try {
-  //     window.location.href = "http://localhost:5000/api/auth/spotify/login";
-  //   } catch (error) {
-  //     console.error("Error signing in with Spotify:", error);
-  //   }
-  // };
+  const handleSpotifySignIn = async () => {
+    try {
+      window.location.href = "http://localhost:5000/api/auth/spotify/login";
+    } catch (error) {
+      console.error("Error signing in with Spotify:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black px-6">
@@ -76,12 +76,12 @@ export default function SignIn() {
           <FaGoogle className="mr-2" /> Sign In with Google
         </button>
 
-        {/* <button
+        <button
           onClick={handleSpotifySignIn}
           className="w-full p-3 flex items-center justify-center bg-green-700 hover:bg-green-800 text-white font-bold rounded-lg transition duration-300"
         >
           <FaSpotify className="mr-2" /> Sign In with Spotify
-        </button> */}
+        </button>
       </div>
     </div>
   );

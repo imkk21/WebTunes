@@ -19,7 +19,7 @@ export async function GET(request: Request) {
           code: code,
           redirect_uri: "http://localhost:3000/auth/spotify/callback", // Must match the redirect URI used in the authorization request
           client_id: "2067f81d796f465b89d6076b5ea65143", // Replace with your Spotify client ID
-          client_secret: "YOUR_SPOTIFY_CLIENT_SECRET", // Replace with your Spotify client secret
+          client_secret: "d296d2a4ff14445a971c7c8af34a3394", // Replace with your Spotify client secret
         },
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

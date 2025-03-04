@@ -42,9 +42,9 @@ export const AuthProvider = ({ children }) => {
 
   // Handle Spotify OAuth flow
   const signInWithSpotify = () => {
-    const clientId = "2067f81d796f465b89d6076b5ea65143";
-    const redirectUri = "http://localhost:3000/auth/callback";
-    const scope = "user-read-email user-read-private streaming";
+    const clientId = "2067f81d796f465b89d6076b5ea65143"; // Replace with your Spotify Client ID
+    const redirectUri = "http://localhost:3000/api/auth/callback/spotify"; // Updated to match backend
+    const scope = "user-read-email user-read-private streaming playlist-read-private";
 
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
       redirectUri
@@ -52,6 +52,26 @@ export const AuthProvider = ({ children }) => {
 
     // Redirect to Spotify authorization page
     window.location.href = authUrl;
+  };
+
+  // Save Spotify token
+  const saveSpotifyToken = async (token) => {
+    try {
+      // Save the token to localStorage
+      localStorage.setItem("spotify_access_token", token);
+      setSpotifyToken(token);
+
+      // Save the token to your backend (e.g., Firebase or your database)
+      if (user) {
+        await fetch(`/api/users/${user.uid}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ spotifyToken: token }),
+        });
+      }
+    } catch (error) {
+      console.error("Error saving Spotify token:", error);
+    }
   };
 
   // Handle logout
@@ -70,7 +90,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, spotifyToken, loading, signInWithSpotify, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        spotifyToken,
+        loading,
+        signInWithSpotify,
+        saveSpotifyToken,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

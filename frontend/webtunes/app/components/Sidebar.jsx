@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { FiHome, FiMusic, FiVideo, FiUser, FiLogOut } from "react-icons/fi";
 import { usePathname } from "next/navigation";
-import { auth } from "@/lib/firebase"; // Import Firebase auth
-import { signOut } from "firebase/auth"; // Import signOut function
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -14,7 +14,7 @@ const Sidebar = () => {
   // Logout function
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign out the user
+      await signOut(auth);
       console.log("User signed out successfully");
     } catch (error) {
       console.error("Logout Error:", error);
@@ -22,12 +22,14 @@ const Sidebar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-64 h-screen bg-gray-800 border-r border-gray-700 p-6 flex flex-col">
+    <nav className="fixed top-0 left-0 w-64 h-screen bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 p-6 flex flex-col shadow-2xl">
       {/* Logo */}
-      <h2 className="text-xl font-bold text-white mb-8">WebTunes</h2>
+      <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-8">
+        WebTunes
+      </h2>
 
       {/* Navigation Links */}
-      <ul className="space-y-2">
+      <ul className="space-y-2 flex-1">
         {[
           { href: "/dashboard", icon: <FiHome />, label: "Home" },
           { href: "/dashboard/music", icon: <FiMusic />, label: "Music" },
@@ -37,14 +39,14 @@ const Sidebar = () => {
           <li key={link.href}>
             <Link
               href={link.href}
-              className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+              className={`flex items-center gap-3 p-3 rounded-lg transition-all transform hover:scale-105 ${
                 isActive(link.href)
-                  ? "bg-gray-700 text-white"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
                   : "text-gray-400 hover:bg-gray-700 hover:text-white"
               }`}
             >
-              {link.icon}
-              <span>{link.label}</span>
+              <span className="text-xl">{link.icon}</span>
+              <span className="text-sm font-medium">{link.label}</span>
             </Link>
           </li>
         ))}
@@ -53,14 +55,16 @@ const Sidebar = () => {
       {/* Logout Button */}
       <button
         onClick={handleLogout}
-        className="mt-auto flex items-center gap-3 p-3 text-gray-400 hover:bg-gray-700 hover:text-white rounded-lg transition-all"
+        className="mt-auto flex items-center gap-3 p-3 text-gray-400 hover:bg-gray-700 hover:text-white rounded-lg transition-all transform hover:scale-105"
       >
-        <FiLogOut />
-        <span>Logout</span>
+        <span className="text-xl">
+          <FiLogOut />
+        </span>
+        <span className="text-sm font-medium">Logout</span>
       </button>
 
-      {/* Footer (Optional) */}
-      <div className="mt-4 text-gray-400 text-sm">
+      {/* Footer */}
+      <div className="mt-4 text-gray-400 text-sm text-center">
         © {new Date().getFullYear()} WebTunes
       </div>
     </nav>
